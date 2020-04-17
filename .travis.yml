@@ -1,0 +1,49 @@
+notifications:
+  email: false
+language: bash
+dist: bionic
+services:
+  - docker
+env:
+  global:
+    - DOCKER_CLI_EXPERIMENTAL=enabled
+    - OCTOBOT_GH_REPO=Drakkar-Software/OctoBot
+    - VERSION=$TRAVIS_BRANCH # TODO use latest except for tags
+
+docker_buildx: &docker_buildx
+      stage: build
+      name: "Docker buildx platform"
+      os: linux
+      language: shell
+      before_install:
+        - sudo rm -rf /var/lib/apt/lists/*
+        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        - lsb_release -cs
+        - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+        - sudo apt-get update
+        - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+        - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      install:
+        - docker version
+        - git clone https://github.com/$OCTOBOT_GH_REPO -b $TRAVIS_BRANCH && cd OctoBot
+        - cp ../Makefile .
+        - cp ../Dockerfile .
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+        - make prepare
+        - travis_wait 60 make build-push
+
+jobs:
+  include:
+    - <<: *docker_buildx
+      env:
+        - PLATFORMS="linux/386"
+    - <<: *docker_buildx
+      env:
+        - PLATFORMS="linux/amd64"
+    - <<: *docker_buildx
+      env:
+        - PLATFORMS="linux/arm64/v8"
+    - <<: *docker_buildx
+      env:
+        - PLATFORMS="linux/arm/v7"
