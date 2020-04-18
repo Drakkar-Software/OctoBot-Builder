@@ -1,5 +1,7 @@
 FROM python:3.7.7-slim-stretch
 
-COPY build.sh /builder
+WORKDIR /builder
+COPY build.sh .
+RUN chmod +x build.sh && mkdir /project
 
-CMD ["/bin/bash", "/builder/build.sh"]
+CMD ["./build.sh"]
