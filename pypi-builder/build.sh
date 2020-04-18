@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 cd /project
 python -m pip install --only-binary cryptography auditwheel cryptography twine
 python -m pip install --prefer-binary -r dev_requirements.txt -r requirements.txt

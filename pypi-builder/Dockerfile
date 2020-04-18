@@ -4,4 +4,4 @@ WORKDIR /builder
 COPY build.sh .
 RUN chmod +x build.sh && mkdir /project
 
-CMD ["./build.sh"]
+CMD ["/bin/sh", "/builder/build.sh"]
