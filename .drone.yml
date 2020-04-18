@@ -1,0 +1,21 @@
+---
+kind: pipeline
+name: building-pypi-on-arm32
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: pypi_publish
+  image: plugins/pypi
+  settings:
+    username:
+      from_secret: pypi_username
+    password:
+      from_secret: pypi_password
+  commands:
+  - apk add git
+  - git clone https://github.com/Drakkar-Software/OctoBot-Commons repo_to_build
+  - cd repo_to_build
+  - git checkout master
