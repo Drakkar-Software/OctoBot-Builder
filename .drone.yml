@@ -8,14 +8,16 @@ platform:
 
 steps:
 - name: pypi_publish
-  image: plugins/pypi
-  settings:
-    username:
+  image: drakkarsoftware/octobot-builder-pypi:0.4.0
+  environment:
+    PYPI_USERNAME:
       from_secret: pypi_username
-    password:
+    PYPI_PASSWORD:
       from_secret: pypi_password
-  commands:
-  - apk add git
-  - git clone https://github.com/Drakkar-Software/OctoBot-Commons repo_to_build
-  - cd repo_to_build
-  - git checkout master
+  volumes:
+    - name: project
+      path: /drone/src/.git/OctoBot-Builder
+
+volumes:
+- name: project
+  temp: {}

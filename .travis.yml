@@ -7,7 +7,7 @@ services:
 env:
   global:
     - DOCKER_CLI_EXPERIMENTAL=enabled
-    - OCTOBOT_GH_REPO=Drakkar-Software/OctoBot
+    - BUILDX_VERSION=v0.3.1
     - VERSION=$TRAVIS_BRANCH # TODO use latest except for tags
 
 docker_buildx: &docker_buildx
@@ -25,25 +25,29 @@ docker_buildx: &docker_buildx
         - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
       install:
         - docker version
-        - git clone https://github.com/$OCTOBOT_GH_REPO -b $TRAVIS_BRANCH && cd OctoBot
-        - cp ../Makefile .
-        - cp ../Dockerfile .
-      script:
+        - git clone https://github.com/$GITHUB_REPOSITORY -b $TRAVIS_BRANCH && cd $GITHUB_PROJECT
+      before_script:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-        - make prepare
-        - travis_wait 60 make build-push
+        - mkdir -vp ~/.docker/cli-plugins/ ~/dockercache
+        - curl --silent -L "https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+        - chmod a+x ~/.docker/cli-plugins/docker-buildx
+      script:
+        - docker buildx create --use
+        - travis_wait 60 docker buildx build --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
 
 jobs:
   include:
     - <<: *docker_buildx
+      name: "Buildx - OctoBot"
       env:
-        - PLATFORMS="linux/386"
+        - PLATFORMS="linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8"
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot"
+        - GITHUB_PROJECT="OctoBot"
+        - IMAGE_NAME="drakkarsoftware/octobot"
     - <<: *docker_buildx
+      name: "Buildx - OctoBot-Builder"
       env:
-        - PLATFORMS="linux/amd64"
-    - <<: *docker_buildx
-      env:
-        - PLATFORMS="linux/arm64/v8"
-    - <<: *docker_buildx
-      env:
-        - PLATFORMS="linux/arm/v7"
+        - PLATFORMS="linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8"
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi-builder"
+        - IMAGE_NAME="drakkarsoftware/octobot-builder-pypi"
