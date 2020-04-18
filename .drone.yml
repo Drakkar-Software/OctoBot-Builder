@@ -8,7 +8,7 @@ platform:
 
 steps:
 - name: pypi_publish
-  image: drakkarsoftware/octobot-builder-pypi:0.4.0
+  image: drakkarsoftware/octobot-builder-pypi:master
   environment:
     PYPI_USERNAME:
       from_secret: pypi_username
