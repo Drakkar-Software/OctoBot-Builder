@@ -1,99 +1,51 @@
 ---
 kind: pipeline
-name: building-pypi-sdist
-
-steps:
-- name: pypi_publish
-  image: plugins/pypi
-  settings:
-    username:
-      from_secret: pypi_username
-    password:
-      from_secret: pypi_password
-  distributions:
-    - sdist
-  setupfile: setup.py
-
----
-kind: pipeline
-name: building-pypi-on-amd64
-
-workspace:
-  base: /project
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: pypi_publish
-  pull: always
-  image: drakkarsoftware/octobot-builder-pypi:master
-  environment:
-    PYPI_USERNAME:
-      from_secret: pypi_username
-    PYPI_PASSWORD:
-      from_secret: pypi_password
-
----
-kind: pipeline
-name: building-pypi-on-i386
-
-workspace:
-  base: /project
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: pypi_publish
-  pull: always
-  image: drakkarsoftware/octobot-builder-pypi-i386:master
-  environment:
-    PYPI_USERNAME:
-      from_secret: pypi_username
-    PYPI_PASSWORD:
-      from_secret: pypi_password
-
----
-kind: pipeline
-name: building-pypi-on-arm64
-
-workspace:
-  base: /project
+name: octobot-on-arm64
 
 platform:
   os: linux
   arch: arm64
 
 steps:
-- name: pypi_publish
-  pull: always
-  image: drakkarsoftware/octobot-builder-pypi:master
-  environment:
-    PYPI_USERNAME:
-      from_secret: pypi_username
-    PYPI_PASSWORD:
-      from_secret: pypi_password
+- name: clone-octobot
+  image: alpine
+  commands:
+    - apk add git
+    - git clone https://github.com/Drakkar-Software/OctoBot
+    - cd OctoBot
+
+- name: docker
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: drakkarsoftware/octobot
+    tags: test-arch
 
 ---
 kind: pipeline
-name: building-pypi-on-arm32
-
-workspace:
-  base: /project
+name: octobot-on-arm32
 
 platform:
   os: linux
   arch: arm
 
 steps:
-- name: pypi_publish
-  pull: always
-  image: drakkarsoftware/octobot-builder-pypi:master
-  environment:
-    PYPI_USERNAME:
-      from_secret: pypi_username
-    PYPI_PASSWORD:
-      from_secret: pypi_password
+- name: clone-octobot
+  image: alpine
+  commands:
+    - apk add git
+    - git clone https://github.com/Drakkar-Software/OctoBot
+    - cd OctoBot
+
+- name: docker
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: drakkarsoftware/octobot
+    tags: test-arch
