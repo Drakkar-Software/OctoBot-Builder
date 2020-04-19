@@ -1,5 +1,21 @@
 ---
 kind: pipeline
+name: building-pypi-sdist
+
+steps:
+- name: pypi_publish
+  image: plugins/pypi
+  settings:
+    username:
+      from_secret: pypi_username
+    password:
+      from_secret: pypi_password
+  distributions:
+    - sdist
+  setupfile: setup.py
+
+---
+kind: pipeline
 name: building-pypi-on-amd64
 
 workspace:
