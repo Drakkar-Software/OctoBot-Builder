@@ -2,6 +2,9 @@
 kind: pipeline
 name: building-pypi-on-amd64
 
+workspace:
+  base: /project
+
 platform:
   os: linux
   arch: amd64
@@ -15,17 +18,13 @@ steps:
       from_secret: pypi_username
     PYPI_PASSWORD:
       from_secret: pypi_password
-  volumes:
-    - name: project
-      path: /drone/src/.git/OctoBot-Builder
-
-volumes:
-- name: project
-  temp: {}
 
 ---
 kind: pipeline
 name: building-pypi-on-i386
+
+workspace:
+  base: /project
 
 platform:
   os: linux
@@ -40,17 +39,13 @@ steps:
       from_secret: pypi_username
     PYPI_PASSWORD:
       from_secret: pypi_password
-  volumes:
-    - name: project
-      path: /drone/src/.git/OctoBot-Builder
-
-volumes:
-- name: project
-  temp: {}
 
 ---
 kind: pipeline
 name: building-pypi-on-arm64
+
+workspace:
+  base: /project
 
 platform:
   os: linux
@@ -65,10 +60,24 @@ steps:
       from_secret: pypi_username
     PYPI_PASSWORD:
       from_secret: pypi_password
-  volumes:
-    - name: project
-      path: /drone/src/.git/OctoBot-Builder
 
-volumes:
-- name: project
-  temp: {}
+---
+kind: pipeline
+name: building-pypi-on-arm32
+
+workspace:
+  base: /project
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: pypi_publish
+  pull: always
+  image: drakkarsoftware/octobot-builder-pypi:master
+  environment:
+    PYPI_USERNAME:
+      from_secret: pypi_username
+    PYPI_PASSWORD:
+      from_secret: pypi_password
