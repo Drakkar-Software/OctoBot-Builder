@@ -1,4 +1,4 @@
-FROM quay.io/pypa/manylinux2014_i686:latest
+FROM quay.io/pypa/manylinux2014_aarch64:latest
 
 WORKDIR /builder
 COPY build.sh .

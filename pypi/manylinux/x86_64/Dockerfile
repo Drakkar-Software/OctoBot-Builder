@@ -1,8 +1,8 @@
-FROM quay.io/pypa/manylinux1_x86_64:latest
+FROM quay.io/pypa/manylinux2014_x86_64:latest
 
 WORKDIR /builder
 COPY build.sh .
-RUN yum install -y libffi-devel.i386 openssl-devel libssl-devel python-devel patchelf \
+RUN yum install -y libffi libffi-devel openssl-devel \
     && chmod +x build.sh \
     && mkdir /project
 
