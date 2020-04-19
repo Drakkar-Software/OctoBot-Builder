@@ -1,5 +1,24 @@
 ---
 kind: pipeline
+name: building-pypi-bdist
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: pypi_publish
+  pull: always
+  image: drakkarsoftware/octobot-builder-pypi:master
+  environment:
+    PYPI_USERNAME:
+      from_secret: pypi_username
+    PYPI_PASSWORD:
+      from_secret: pypi_password
+    BUILD_TYPE: "SDIST"
+
+---
+kind: pipeline
 name: building-pypi-on-amd64
 
 workspace:
@@ -33,7 +52,7 @@ platform:
 steps:
 - name: pypi_publish
   pull: always
-  image: drakkarsoftware/octobot-builder-pypi-i386:master
+  image: drakkarsoftware/octobot-builder-pypi:master
   environment:
     PYPI_USERNAME:
       from_secret: pypi_username
@@ -54,7 +73,7 @@ platform:
 steps:
 - name: pypi_publish
   pull: always
-  image: drakkarsoftware/octobot-builder-pypi:master
+  image: drakkarsoftware/octobot-builder-pypi:manylinux-x86_64
   environment:
     PYPI_USERNAME:
       from_secret: pypi_username
@@ -75,7 +94,7 @@ platform:
 steps:
 - name: pypi_publish
   pull: always
-  image: drakkarsoftware/octobot-builder-pypi:master
+  image: drakkarsoftware/octobot-builder-pypi:manylinux-i686
   environment:
     PYPI_USERNAME:
       from_secret: pypi_username
