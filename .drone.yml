@@ -1,13 +1,64 @@
 ---
 kind: pipeline
-name: building-pypi-on-arm32
+name: building-pypi-on-amd64
 
 platform:
   os: linux
-  arch: arm
+  arch: amd64
 
 steps:
 - name: pypi_publish
+  pull: always
+  image: drakkarsoftware/octobot-builder-pypi:master
+  environment:
+    PYPI_USERNAME:
+      from_secret: pypi_username
+    PYPI_PASSWORD:
+      from_secret: pypi_password
+  volumes:
+    - name: project
+      path: /drone/src/.git/OctoBot-Builder
+
+volumes:
+- name: project
+  temp: {}
+
+---
+kind: pipeline
+name: building-pypi-on-i386
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: pypi_publish
+  pull: always
+  image: drakkarsoftware/octobot-builder-pypi-i386:master
+  environment:
+    PYPI_USERNAME:
+      from_secret: pypi_username
+    PYPI_PASSWORD:
+      from_secret: pypi_password
+  volumes:
+    - name: project
+      path: /drone/src/.git/OctoBot-Builder
+
+volumes:
+- name: project
+  temp: {}
+
+---
+kind: pipeline
+name: building-pypi-on-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: pypi_publish
+  pull: always
   image: drakkarsoftware/octobot-builder-pypi:master
   environment:
     PYPI_USERNAME:

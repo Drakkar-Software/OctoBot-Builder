@@ -9,6 +9,7 @@ env:
     - DOCKER_CLI_EXPERIMENTAL=enabled
     - BUILDX_VERSION=v0.3.1
     - VERSION=$TRAVIS_BRANCH # TODO use latest except for tags
+    - DOCKER_FILE=Dockerfile
 
 docker_buildx: &docker_buildx
       stage: build
@@ -33,7 +34,21 @@ docker_buildx: &docker_buildx
         - chmod a+x ~/.docker/cli-plugins/docker-buildx
       script:
         - docker buildx create --use
-        - travis_wait 60 docker buildx build --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
+        - travis_wait 60 docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
+
+docker_build: &docker_build
+      stage: build
+      name: "Docker build platform"
+      os: linux
+      language: shell
+      install:
+        - docker version
+        - git clone https://github.com/$GITHUB_REPOSITORY -b $TRAVIS_BRANCH && cd $GITHUB_PROJECT
+      before_script:
+        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+      script:
+        - docker build -f $DOCKER_FILE -t $IMAGE_NAME:$VERSION .
+        - docker push $IMAGE_NAME:$VERSION
 
 jobs:
   include:
@@ -47,7 +62,14 @@ jobs:
     - <<: *docker_buildx
       name: "Buildx - OctoBot-Builder"
       env:
-        - PLATFORMS="linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8"
+        - PLATFORMS="linux/amd64,linux/arm/v7,linux/arm64/v8"
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi-builder"
         - IMAGE_NAME="drakkarsoftware/octobot-builder-pypi"
+    - <<: *docker_build
+      name: "Build - OctoBot-Builder - i386"
+      env:
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi-builder"
+        - IMAGE_NAME="drakkarsoftware/octobot-builder-pypi-i386"
+        - DOCKER_FILE="i686/Dockerfile"
