@@ -7,13 +7,6 @@ platform:
   arch: arm64
 
 steps:
-- name: clone-octobot
-  image: alpine
-  commands:
-    - apk add git
-    - git clone https://github.com/Drakkar-Software/OctoBot
-    - cd OctoBot
-
 - name: docker
   image: plugins/docker
   settings:
@@ -22,7 +15,7 @@ steps:
     password:
       from_secret: docker_password
     repo: drakkarsoftware/octobot
-    tags: test-arch
+    tags: ${DRONE_COMMIT_BRANCH}
 
 ---
 kind: pipeline
@@ -33,13 +26,6 @@ platform:
   arch: arm
 
 steps:
-- name: clone-octobot
-  image: alpine
-  commands:
-    - apk add git
-    - git clone https://github.com/Drakkar-Software/OctoBot
-    - cd OctoBot
-
 - name: docker
   image: plugins/docker
   settings:
@@ -48,4 +34,4 @@ steps:
     password:
       from_secret: docker_password
     repo: drakkarsoftware/octobot
-    tags: test-arch
+    tags: ${DRONE_COMMIT_BRANCH}
