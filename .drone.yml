@@ -19,6 +19,11 @@ steps:
     PYPI_PASSWORD:
       from_secret: pypi_password
     BUILD_TYPE: "SDIST"
+  when:
+    event:
+    - tag
+    repo:
+    - Drakkar-Software/OctoBot-Builder
 
 ---
 kind: pipeline
@@ -40,6 +45,11 @@ steps:
       from_secret: pypi_username
     PYPI_PASSWORD:
       from_secret: pypi_password
+  when:
+    event:
+    - tag
+    repo:
+    - Drakkar-Software/OctoBot-Builder
 
 ---
 kind: pipeline
@@ -61,6 +71,11 @@ steps:
       from_secret: pypi_username
     PYPI_PASSWORD:
       from_secret: pypi_password
+  when:
+    event:
+    - tag
+    repo:
+    - Drakkar-Software/OctoBot-Builder
 
 ---
 kind: pipeline
@@ -82,3 +97,8 @@ steps:
       from_secret: pypi_username
     PYPI_PASSWORD:
       from_secret: pypi_password
+  when:
+    event:
+    - tag
+    repo:
+    - Drakkar-Software/OctoBot-Builder
