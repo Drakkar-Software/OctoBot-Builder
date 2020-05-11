@@ -10,4 +10,7 @@ if [ "$BUILD_TYPE" = "WHEEL" ]; then
 elif [ "$BUILD_TYPE" = "SDIST" ]; then
     ${PYTHON_PATH}/python setup.py sdist
     ${PYTHON_PATH}/python -m twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --skip-existing $(find dist -iname "*.tar.gz")
+elif [ "$BUILD_TYPE" = "STDEB" ]; then
+    ${PYTHON_PATH}/python setup.py --command-packages=stdeb.command bdist_deb
+    ${PYTHON_PATH}/python -m twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --skip-existing $(find deb_dist -iname "*.deb")
 fi

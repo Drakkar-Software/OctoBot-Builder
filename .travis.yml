@@ -92,3 +92,11 @@ jobs:
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="manylinux-aarch64"
         - DOCKER_FILE="manylinux/aarch64/Dockerfile"
+    - <<: *docker_build
+      name: "Build - OctoBot-Builder - stdeb"
+      env:
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - IMAGE_NAME="drakkarsoftware/pypi-builder"
+        - VERSION="stdeb"
+        - DOCKER_FILE="stdeb/Dockerfile"
