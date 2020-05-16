@@ -26,7 +26,7 @@ docker_buildx: &docker_buildx
         - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
       install:
         - docker version
-        - git clone https://github.com/$GITHUB_REPOSITORY -b $TRAVIS_BRANCH && cd $GITHUB_PROJECT
+        - git clone https://github.com/$GITHUB_REPOSITORY -b $PROJECT_BRANCH && cd $GITHUB_PROJECT
       script:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - mkdir -vp ~/.docker/cli-plugins/ ~/dockercache
@@ -57,7 +57,9 @@ jobs:
         - PLATFORMS="linux/386,linux/amd64,linux/arm64/v8"
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot"
         - GITHUB_PROJECT="OctoBot"
+        - PROJECT_BRANCH="0.4.0"
         - IMAGE_NAME="drakkarsoftware/octobot"
+        - VERSION="0.4.0"
       before_script:
         - cp ../Dockerfile .
     - <<: *docker_buildx
@@ -66,6 +68,7 @@ jobs:
         - PLATFORMS="linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8"
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - PROJECT_BRANCH="master"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - DOCKER_FILE="builder/Dockerfile"
     - <<: *docker_build
