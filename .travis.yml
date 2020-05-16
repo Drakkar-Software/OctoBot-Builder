@@ -27,11 +27,12 @@ docker_buildx: &docker_buildx
       install:
         - docker version
         - git clone https://github.com/$GITHUB_REPOSITORY -b $PROJECT_BRANCH && cd $GITHUB_PROJECT
-      script:
+      before_script:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - mkdir -vp ~/.docker/cli-plugins/ ~/dockercache
         - curl --silent -L "https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
         - chmod a+x ~/.docker/cli-plugins/docker-buildx
+      script:
         - docker buildx create --use
         - docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
 
@@ -60,8 +61,6 @@ jobs:
         - PROJECT_BRANCH="0.4.0"
         - IMAGE_NAME="drakkarsoftware/octobot"
         - VERSION="0.4.0"
-      before_script:
-        - cp ../Dockerfile .
     - <<: *docker_buildx
       name: "Buildx - OctoBot-Builder"
       env:
