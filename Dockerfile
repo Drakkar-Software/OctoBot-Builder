@@ -9,7 +9,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
 RUN pip install --upgrade pip \
-    && pip install Cython>=0.29.16 \
+    && pip install Cython>=0.29.17 \
     && pip install --prefer-binary -r requirements.txt \
     && python setup.py install
 
