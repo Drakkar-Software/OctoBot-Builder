@@ -1,6 +1,12 @@
 #!/bin/sh
 cd /project || exit
 
+# download pypi project
+if [ -z "$PYPI_DOWNLOAD" ]; then
+  ${PYTHON_PATH}/python -m pip download $PYPI_DOWNLOAD --no-binary :all:
+  unzip *.zip
+fi
+
 # install build dependencies
 ${PYTHON_PATH}/python -m pip install --prefer-binary auditwheel cryptography twine
 
@@ -10,6 +16,9 @@ test -f requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary
 
 # clean project
 test -f Makefile && make clean
+
+# define upload repository
+[ -z "$PYPI_REPOSITORY" ] && export PYPI_REPOSITORY="https://upload.pypi.org/legacy/"
 
 # build and publish
 if [ "$BUILD_TYPE" = "WHEEL" ]; then

@@ -2,7 +2,7 @@ FROM quay.io/pypa/manylinux2014_aarch64:latest
 
 WORKDIR /builder
 COPY build.sh .
-RUN yum install -y libffi libffi-devel openssl-devel \
+RUN yum install -y libffi libffi-devel openssl-devel unzip \
     && chmod +x build.sh \
     && mkdir /project
 
