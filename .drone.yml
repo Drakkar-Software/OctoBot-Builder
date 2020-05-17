@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-name: building-pypi-on-arm64
+name: building-pypi-numpy-on-arm64
 
 workspace:
   base: /project
@@ -10,11 +10,34 @@ platform:
   arch: arm64
 
 steps:
-- name: nexus_pypi_publish-numpy
+- name: nexus_pypi_publish
   pull: always
   image: drakkarsoftware/pypi-builder:manylinux-aarch64
   environment:
     PYPI_DOWNLOAD: numpy
+    PYPI_USERNAME:
+      from_secret: nexus_pypi_username
+    PYPI_PASSWORD:
+      from_secret: nexus_pypi_password
+    PYPI_REPOSITORY: https://www.tentacles.octobot.online/repository/octobot_pypi/
+
+---
+kind: pipeline
+name: building-pypi-pandas-on-arm64
+
+workspace:
+  base: /project
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: nexus_pypi_publish
+  pull: always
+  image: drakkarsoftware/pypi-builder:manylinux-aarch64
+  environment:
+    PYPI_DOWNLOAD: pandas
     PYPI_USERNAME:
       from_secret: nexus_pypi_username
     PYPI_PASSWORD:
