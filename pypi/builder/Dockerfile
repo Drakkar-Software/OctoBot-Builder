@@ -3,7 +3,7 @@ FROM python:3.7.7-slim-stretch
 WORKDIR /builder
 COPY build.sh .
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential gcc unzip libffi-dev libssl-dev patchelf \
+    && apt-get install -y --no-install-recommends build-essential gcc libblas-dev liblapack-dev wget unzip libffi-dev libssl-dev patchelf \
     && chmod +x build.sh \
     && mkdir /project
 

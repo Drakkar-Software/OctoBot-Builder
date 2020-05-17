@@ -14,7 +14,9 @@ steps:
   pull: always
   image: drakkarsoftware/pypi-builder:manylinux-aarch64
   environment:
-    PYPI_DOWNLOAD: numpy
+    OCTOBOT_PYPI_URL:
+      from_secret: OCTOBOT_PYPI_URL
+    PYPI_DOWNLOAD: numpy==1.18.4
     PYPI_USERNAME:
       from_secret: nexus_pypi_username
     PYPI_PASSWORD:
@@ -37,9 +39,12 @@ steps:
   pull: always
   image: drakkarsoftware/pypi-builder:manylinux-aarch64
   environment:
-    PYPI_DOWNLOAD: pandas
+    OCTOBOT_PYPI_URL:
+      from_secret: OCTOBOT_PYPI_URL
+    PYPI_DOWNLOAD: pandas==1.0.3
     PYPI_USERNAME:
       from_secret: nexus_pypi_username
     PYPI_PASSWORD:
       from_secret: nexus_pypi_password
     PYPI_REPOSITORY: https://www.tentacles.octobot.online/repository/octobot_pypi/
+    PYPI_REQUIREMENTS_FILE_URL: https://raw.githubusercontent.com/pandas-dev/pandas/master/requirements-dev.txt

@@ -6,16 +6,22 @@ if [ -n "$PYPI_DOWNLOAD" ]; then
   ${PYTHON_PATH}/python -m pip download $PYPI_DOWNLOAD --no-binary :all:
   unzip *.zip || true
   tar -zxvf *.tar.gz || true
-  cd $(find . -type d -iname "*$PYPI_DOWNLOAD*") || exit
+  cd $(find . -maxdepth 1 -type d -iname "*$PYPI_DOWNLOAD*") || exit
 fi
 
 # install build dependencies
-${PYTHON_PATH}/python -m pip install --extra-index-url https://www.tentacles.octobot.online/repository/octobot_pypi/simple --prefer-binary auditwheel cryptography twine
+${PYTHON_PATH}/python -m pip install --extra-index-url $OCTOBOT_PYPI_URL --prefer-binary auditwheel cryptography twine
+
+# Install requirements from file
+[ -n "$PYPI_REQUIREMENTS_FILE_URL" ] && wget -O requirements.txt $PYPI_REQUIREMENTS_FILE_URL
 
 # install requirements
-test -f dev_requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r dev_requirements.txt
-test -f test_requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r test_requirements.txt
-test -f requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r requirements.txt
+test -f dev_requirements.txt && ${PYTHON_PATH}/python -m pip install --extra-index-url $OCTOBOT_PYPI_URL --prefer-binary -r dev_requirements.txt
+test -f test_requirements.txt && ${PYTHON_PATH}/python -m pip install --extra-index-url $OCTOBOT_PYPI_URL --prefer-binary -r test_requirements.txt
+test -f requirements.txt && ${PYTHON_PATH}/python -m pip install --extra-index-url $OCTOBOT_PYPI_URL --prefer-binary -r requirements.txt
+
+# Install custom requirements
+[ -n "$PYPI_REQUIREMENTS" ] && ${PYTHON_PATH}/python -m pip install --extra-index-url $OCTOBOT_PYPI_URL --prefer-binary $PYPI_REQUIREMENTS
 
 # clean project
 test -f Makefile && make clean
