@@ -10,7 +10,7 @@ if [ -n "$PYPI_DOWNLOAD" ]; then
 fi
 
 # install build dependencies
-${PYTHON_PATH}/python -m pip install --prefer-binary auditwheel cryptography twine
+${PYTHON_PATH}/python -m pip install --extra-index-url https://www.tentacles.octobot.online/repository/octobot_pypi/simple --prefer-binary auditwheel cryptography twine
 
 # install requirements
 test -f dev_requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r dev_requirements.txt
