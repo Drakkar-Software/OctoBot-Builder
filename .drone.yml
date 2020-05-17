@@ -1,84 +1,5 @@
 ---
 kind: pipeline
-name: building-pypi-bdist
-
-workspace:
-  base: /project
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: pypi_publish
-  pull: always
-  image: drakkarsoftware/pypi-builder:master
-  environment:
-    PYPI_USERNAME:
-      from_secret: pypi_username
-    PYPI_PASSWORD:
-      from_secret: pypi_password
-    BUILD_TYPE: "SDIST"
-  when:
-    event:
-    - tag
-    repo:
-    - Drakkar-Software/OctoBot-Builder
-
----
-kind: pipeline
-name: building-pypi-on-amd64
-
-workspace:
-  base: /project
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: pypi_publish
-  pull: always
-  image: drakkarsoftware/pypi-builder:manylinux-x86_64
-  environment:
-    PYPI_USERNAME:
-      from_secret: pypi_username
-    PYPI_PASSWORD:
-      from_secret: pypi_password
-  when:
-    event:
-    - tag
-    repo:
-    - Drakkar-Software/OctoBot-Builder
-
----
-kind: pipeline
-name: building-pypi-on-i386
-
-workspace:
-  base: /project
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: pypi_publish
-  pull: always
-  image: drakkarsoftware/pypi-builder:manylinux-i686
-  environment:
-    PYPI_USERNAME:
-      from_secret: pypi_username
-    PYPI_PASSWORD:
-      from_secret: pypi_password
-  when:
-    event:
-    - tag
-    repo:
-    - Drakkar-Software/OctoBot-Builder
-
----
-kind: pipeline
 name: building-pypi-on-arm64
 
 workspace:
@@ -89,16 +10,13 @@ platform:
   arch: arm64
 
 steps:
-- name: pypi_publish
+- name: nexus_pypi_publish-numpy
   pull: always
   image: drakkarsoftware/pypi-builder:manylinux-aarch64
   environment:
+    PYPI_DOWNLOAD: numpy
     PYPI_USERNAME:
-      from_secret: pypi_username
+      from_secret: nexus_pypi_username
     PYPI_PASSWORD:
-      from_secret: pypi_password
-  when:
-    event:
-    - tag
-    repo:
-    - Drakkar-Software/OctoBot-Builder
+      from_secret: nexus_pypi_password
+    PYPI_REPOSITORY: https://www.tentacles.octobot.online/repository/octobot_pypi/

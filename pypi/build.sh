@@ -2,9 +2,11 @@
 cd /project || exit
 
 # download pypi project
-if [ -z "$PYPI_DOWNLOAD" ]; then
+if [ -n "$PYPI_DOWNLOAD" ]; then
   ${PYTHON_PATH}/python -m pip download $PYPI_DOWNLOAD --no-binary :all:
-  unzip *.zip
+  unzip *.zip || true
+  tar -zxvf *.tar.gz || true
+  cd $(find . -type d -iname "*$PYPI_DOWNLOAD*") || exit
 fi
 
 # install build dependencies
@@ -12,6 +14,7 @@ ${PYTHON_PATH}/python -m pip install --prefer-binary auditwheel cryptography twi
 
 # install requirements
 test -f dev_requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r dev_requirements.txt
+test -f test_requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r test_requirements.txt
 test -f requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r requirements.txt
 
 # clean project
@@ -24,11 +27,11 @@ test -f Makefile && make clean
 if [ "$BUILD_TYPE" = "WHEEL" ]; then
     ${PYTHON_PATH}/python setup.py bdist_wheel
     auditwheel repair dist/*
-    ${PYTHON_PATH}/python -m twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --skip-existing wheelhouse/*
+    ${PYTHON_PATH}/python -m twine upload --repository-url ${PYPI_REPOSITORY} -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --skip-existing wheelhouse/*
 elif [ "$BUILD_TYPE" = "SDIST" ]; then
     ${PYTHON_PATH}/python setup.py sdist
-    ${PYTHON_PATH}/python -m twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --skip-existing dist/*
+    ${PYTHON_PATH}/python -m twine upload --repository-url ${PYPI_REPOSITORY} -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --skip-existing dist/*
 elif [ "$BUILD_TYPE" = "STDEB" ]; then
     ${PYTHON_PATH}/python setup.py --command-packages=stdeb.command bdist_deb
-    ${PYTHON_PATH}/python -m twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --skip-existing deb_dist/*
+    ${PYTHON_PATH}/python -m twine upload --repository-url ${PYPI_REPOSITORY} -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --skip-existing deb_dist/*
 fi
