@@ -1,10 +1,15 @@
 #!/bin/sh
 cd /project || exit
+
+# install build dependencies
 ${PYTHON_PATH}/python -m pip install --prefer-binary auditwheel cryptography twine
-${PYTHON_PATH}/python -m pip install --prefer-binary -r dev_requirements.txt -r requirements.txt
+
+# install requirements
+test -f dev_requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r dev_requirements.txt
+test -f requirements.txt && ${PYTHON_PATH}/python -m pip install --prefer-binary -r requirements.txt
 
 # clean project
-make clean
+test -f Makefile && make clean
 
 # build and publish
 if [ "$BUILD_TYPE" = "WHEEL" ]; then
