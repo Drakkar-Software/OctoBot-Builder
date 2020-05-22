@@ -3,7 +3,11 @@ cd /project || exit
 
 # download pypi project
 if [ -n "$PYPI_DOWNLOAD" ]; then
-  ${PYTHON_PATH}/python -m pip download $PYPI_DOWNLOAD --no-binary :all:
+  if [ -n "$PYPI_DOWNLOAD_VERSION" ]; then
+    ${PYTHON_PATH}/python -m pip download $PYPI_DOWNLOAD==$PYPI_DOWNLOAD_VERSION --no-binary :all:
+  else
+    ${PYTHON_PATH}/python -m pip download $PYPI_DOWNLOAD --no-binary :all:
+  fi
   unzip *.zip || true
   tar -zxvf *.tar.gz || true
   cd $(find . -maxdepth 1 -type d -iname "*$PYPI_DOWNLOAD*") || exit
