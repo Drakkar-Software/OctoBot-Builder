@@ -2,7 +2,7 @@ FROM quay.io/pypa/manylinux2014_i686:latest
 
 WORKDIR /builder
 COPY build.sh .
-RUN yum install -y libffi libffi-devel openssl-devel wget unzip blas-devel lapack-devel \
+RUN yum install -y libffi libffi-devel openssl-devel wget unzip blas-devel lapack-devel libxml2-devel libxslt-devel \
     && chmod +x build.sh \
     && mkdir /project
 
