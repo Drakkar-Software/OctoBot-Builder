@@ -65,31 +65,7 @@ steps:
     OCTOBOT_PYPI_URL:
       from_secret: OCTOBOT_PYPI_URL
     PYPI_DOWNLOAD: tulipy
-    PYPI_USERNAME:
-      from_secret: nexus_pypi_username
-    PYPI_PASSWORD:
-      from_secret: nexus_pypi_password
-    PYPI_REPOSITORY: https://www.tentacles.octobot.online/repository/octobot_pypi/
-
----
-kind: pipeline
-name: building-pypi-cryptography-on-arm64
-
-workspace:
-  base: /project
-
-platform:
-  os: linux
-  arch: arm64
-
-steps:
-- name: nexus_pypi_publish
-  pull: always
-  image: drakkarsoftware/pypi-builder:manylinux-aarch64
-  environment:
-    OCTOBOT_PYPI_URL:
-      from_secret: OCTOBOT_PYPI_URL
-    PYPI_DOWNLOAD: cryptography
+    PYPI_REQUIREMENTS: numpy cython
     PYPI_USERNAME:
       from_secret: nexus_pypi_username
     PYPI_PASSWORD:
@@ -123,7 +99,7 @@ steps:
 
 ---
 kind: pipeline
-name: building-pypi-cffi-on-arm64
+name: building-pypi-cryptography-cffi-multidict-on-arm64
 
 workspace:
   base: /project
@@ -133,13 +109,37 @@ platform:
   arch: arm64
 
 steps:
-- name: nexus_pypi_publish
+- name: nexus_pypi_publish_cryptography
+  pull: always
+  image: drakkarsoftware/pypi-builder:manylinux-aarch64
+  environment:
+    OCTOBOT_PYPI_URL:
+      from_secret: OCTOBOT_PYPI_URL
+    PYPI_DOWNLOAD: cryptography
+    PYPI_USERNAME:
+      from_secret: nexus_pypi_username
+    PYPI_PASSWORD:
+      from_secret: nexus_pypi_password
+    PYPI_REPOSITORY: https://www.tentacles.octobot.online/repository/octobot_pypi/
+- name: nexus_pypi_publish_cffi
   pull: always
   image: drakkarsoftware/pypi-builder:manylinux-aarch64
   environment:
     OCTOBOT_PYPI_URL:
       from_secret: OCTOBOT_PYPI_URL
     PYPI_DOWNLOAD: cffi
+    PYPI_USERNAME:
+      from_secret: nexus_pypi_username
+    PYPI_PASSWORD:
+      from_secret: nexus_pypi_password
+    PYPI_REPOSITORY: https://www.tentacles.octobot.online/repository/octobot_pypi/
+- name: nexus_pypi_publish_multidict
+  pull: always
+  image: drakkarsoftware/pypi-builder:manylinux-aarch64
+  environment:
+    OCTOBOT_PYPI_URL:
+      from_secret: OCTOBOT_PYPI_URL
+    PYPI_DOWNLOAD: multidict
     PYPI_USERNAME:
       from_secret: nexus_pypi_username
     PYPI_PASSWORD:
