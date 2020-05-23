@@ -9,7 +9,7 @@ if [ -n "$PYPI_DOWNLOAD" ]; then
     ${PYTHON_PATH}/python -m pip download $PYPI_DOWNLOAD --no-binary :all:
   fi
   unzip *.zip || true
-  tar -zxvf *.tar.gz || true
+  ls *.tar.gz |xargs -n1 tar -zxvf || true
   cd $(find . -maxdepth 1 -type d -iname "*$PYPI_DOWNLOAD*") || exit
 fi
 
