@@ -34,7 +34,7 @@ docker_buildx: &docker_buildx
         - chmod a+x ~/.docker/cli-plugins/docker-buildx
       script:
         - docker buildx create --use
-        - travis_wait 60 docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
+        - docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
 
 docker_build: &docker_build
       stage: build
