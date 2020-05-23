@@ -1,5 +1,27 @@
 ---
 kind: pipeline
+name: building-pypi-builder-aarch64-image
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: docker
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
+    context: pypi
+    repo: drakkarsoftware/pypi-builder
+    dockerfile: pypi/manylinux/aarch64/Dockerfile
+    tags:
+    - manylinux-aarch64
+
+---
+kind: pipeline
 name: building-pypi-numpy-on-arm64
 
 workspace:
