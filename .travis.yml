@@ -8,7 +8,6 @@ env:
   global:
     - DOCKER_CLI_EXPERIMENTAL=enabled
     - BUILDX_VERSION=v0.3.1
-    - VERSION=$TRAVIS_BRANCH # TODO use latest except for tags
     - DOCKER_FILE=Dockerfile
 
 docker_buildx: &docker_buildx
@@ -34,6 +33,7 @@ docker_buildx: &docker_buildx
         - chmod a+x ~/.docker/cli-plugins/docker-buildx
       script:
         - docker buildx create --use
+        - if [ -n "$TRAVIS_TAG" ]; then export VERSION=$TRAVIS_TAG; fi
         - docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
 
 docker_build: &docker_build
@@ -61,15 +61,6 @@ jobs:
         - PROJECT_BRANCH="0.4.0"
         - IMAGE_NAME="drakkarsoftware/octobot"
         - VERSION="0.4.0"
-#    - <<: *docker_buildx
-#      name: "Buildx - OctoBot-Builder"
-#      env:
-#        - PLATFORMS="linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8"
-#        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
-#        - GITHUB_PROJECT="OctoBot-Builder/pypi"
-#        - PROJECT_BRANCH="master"
-#        - IMAGE_NAME="drakkarsoftware/pypi-builder"
-#        - DOCKER_FILE="builder/Dockerfile"
     - <<: *docker_build
       name: "Build - OctoBot-Builder - manylinux - i686"
       env:
@@ -86,15 +77,6 @@ jobs:
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="manylinux-x86_64"
         - DOCKER_FILE="manylinux/x86_64/Dockerfile"
-#    - <<: *docker_build
-#      name: "Build - OctoBot-Builder - manylinux - aarch64"
-#      arch: arm64
-#      env:
-#        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
-#        - GITHUB_PROJECT="OctoBot-Builder/pypi"
-#        - IMAGE_NAME="drakkarsoftware/pypi-builder"
-#        - VERSION="manylinux-aarch64"
-#        - DOCKER_FILE="manylinux/aarch64/Dockerfile"
     - <<: *docker_build
       name: "Build - OctoBot-Builder - stdeb"
       env:
