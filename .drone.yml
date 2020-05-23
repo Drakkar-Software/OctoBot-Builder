@@ -85,6 +85,31 @@ steps:
 
 ---
 kind: pipeline
+name: building-pypi-lxml-on-arm64
+
+workspace:
+  base: /project
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: nexus_pypi_publish
+  pull: always
+  image: drakkarsoftware/pypi-builder:manylinux-aarch64
+  environment:
+    OCTOBOT_PYPI_URL:
+      from_secret: OCTOBOT_PYPI_URL
+    PYPI_DOWNLOAD: lxml
+    PYPI_USERNAME:
+      from_secret: nexus_pypi_username
+    PYPI_PASSWORD:
+      from_secret: nexus_pypi_password
+    PYPI_REPOSITORY: https://www.tentacles.octobot.online/repository/octobot_pypi/
+
+---
+kind: pipeline
 name: building-pypi-cryptography-cffi-multidict-on-arm64
 
 workspace:
