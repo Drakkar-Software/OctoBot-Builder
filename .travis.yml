@@ -61,6 +61,16 @@ jobs:
         - PROJECT_BRANCH="0.4.0"
         - IMAGE_NAME="drakkarsoftware/octobot"
         - VERSION="0.4.0"
+    - <<: *docker_buildx
+      name: "Buildx - OctoBot-Builder"
+      env:
+        - PLATFORMS="linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8"
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - PROJECT_BRANCH="master"
+        - IMAGE_NAME="drakkarsoftware/pypi-builder"
+        - DOCKER_FILE="builder/Dockerfile"
+        - VERSION="latest"
     - <<: *docker_build
       name: "Build - OctoBot-Builder - manylinux - i686"
       env:
