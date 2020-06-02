@@ -55,7 +55,7 @@ jobs:
     - <<: *docker_buildx
       name: "Buildx - OctoBot"
       env:
-        - PLATFORMS="linux/386,linux/amd64,linux/arm64/v8"
+        - PLATFORMS="linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8"
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot"
         - GITHUB_PROJECT="OctoBot"
         - PROJECT_BRANCH="0.4.0"
