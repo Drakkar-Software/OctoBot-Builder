@@ -9,6 +9,7 @@ env:
     - DOCKER_CLI_EXPERIMENTAL=enabled
     - BUILDX_VERSION=v0.3.1
     - DOCKER_FILE=Dockerfile
+    - OCTOBOT_DOCKER_API_IMAGE_TAG=0.4.0-stable
 
 docker_buildx: &docker_buildx
       stage: build
@@ -34,6 +35,7 @@ docker_buildx: &docker_buildx
       script:
         - docker buildx create --use
         - if [ -n "$TRAVIS_TAG" ]; then export VERSION=$TRAVIS_TAG; fi
+        - if [ "$TRAVIS_EVENT_TYPE" == "api" ]; then export VERSION=$OCTOBOT_DOCKER_API_IMAGE_TAG; fi
         - docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
 
 docker_build: &docker_build
