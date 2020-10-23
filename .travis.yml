@@ -1,3 +1,4 @@
+version: ~> 1.0
 notifications:
   email: false
 language: bash
@@ -12,45 +13,43 @@ env:
     - OCTOBOT_DOCKER_API_IMAGE_TAG=0.4.0-stable
 
 docker_buildx: &docker_buildx
-      stage: build
-      name: "Docker buildx platform"
-      os: linux
-      language: shell
-      before_install:
-        - sudo rm -rf /var/lib/apt/lists/*
-        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        - lsb_release -cs
-        - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
-        - sudo apt-get update
-        - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-        - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-      install:
-        - docker version
-        - git clone https://github.com/$GITHUB_REPOSITORY -b $PROJECT_BRANCH && cd $GITHUB_PROJECT
-      before_script:
-        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-        - mkdir -vp ~/.docker/cli-plugins/ ~/dockercache
-        - curl --silent -L "https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
-        - chmod a+x ~/.docker/cli-plugins/docker-buildx
-      script:
-        - docker buildx create --use
-        - if [ -n "$TRAVIS_TAG" ]; then export VERSION=$TRAVIS_TAG; fi
-        - if [ "$TRAVIS_EVENT_TYPE" == "api" ]; then export VERSION=$OCTOBOT_DOCKER_API_IMAGE_TAG; fi
-        - docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
+  stage: build
+  os: linux
+  language: shell
+  before_install:
+    - sudo rm -rf /var/lib/apt/lists/*
+    - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    - lsb_release -cs
+    - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+    - sudo apt-get update
+    - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  install:
+    - docker version
+    - git clone https://github.com/$GITHUB_REPOSITORY -b $PROJECT_BRANCH && cd $GITHUB_PROJECT
+  before_script:
+    - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+    - mkdir -vp ~/.docker/cli-plugins/ ~/dockercache
+    - curl --silent -L "https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+  script:
+    - docker buildx create --use
+    - if [ -n "$TRAVIS_TAG" ]; then export VERSION=$TRAVIS_TAG; fi
+    - if [ "$TRAVIS_EVENT_TYPE" == "api" ]; then export VERSION=$OCTOBOT_DOCKER_API_IMAGE_TAG; fi
+    - docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
 
 docker_build: &docker_build
-      stage: build
-      name: "Docker build platform"
-      os: linux
-      language: shell
-      install:
-        - docker version
-        - git clone https://github.com/$GITHUB_REPOSITORY -b $TRAVIS_BRANCH && cd $GITHUB_PROJECT
-      before_script:
-        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-      script:
-        - docker build -f $DOCKER_FILE -t $IMAGE_NAME:$VERSION .
-        - docker push $IMAGE_NAME:$VERSION
+  stage: build
+  os: linux
+  language: shell
+  install:
+    - docker version
+    - git clone https://github.com/$GITHUB_REPOSITORY -b $TRAVIS_BRANCH && cd $GITHUB_PROJECT
+  before_script:
+    - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+  script:
+    - docker build -f $DOCKER_FILE --build-arg PYTHON_VERSION=$PYTHON_VERSION -t $IMAGE_NAME:python-$PYTHON_VERSION-$VERSION .
+    - docker push $IMAGE_NAME:python-$PYTHON_VERSION-$VERSION
 
 jobs:
   include:
@@ -73,30 +72,87 @@ jobs:
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - DOCKER_FILE="builder/Dockerfile"
         - VERSION="latest"
-    - <<: *docker_build
-      name: "Build - OctoBot-Builder - manylinux - i686"
+    - name: "Build - OctoBot-Builder - manylinux - i686 - Python 3.7"
+      <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="manylinux-i686"
         - DOCKER_FILE="manylinux/i686/Dockerfile"
-    - <<: *docker_build
-      name: "Build - OctoBot-Builder - manylinux - x86_64"
+        - PYTHON_VERSION="3.7"
+    - name: "Build - OctoBot-Builder - manylinux - i686 - Python 3.8"
+      <<: *docker_build
+      env:
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - IMAGE_NAME="drakkarsoftware/pypi-builder"
+        - VERSION="manylinux-i686"
+        - DOCKER_FILE="manylinux/i686/Dockerfile"
+        - PYTHON_VERSION="3.8"
+    - name: "Build - OctoBot-Builder - manylinux - i686 - Python 3.9"
+      <<: *docker_build
+      env:
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - IMAGE_NAME="drakkarsoftware/pypi-builder"
+        - VERSION="manylinux-i686"
+        - DOCKER_FILE="manylinux/i686/Dockerfile"
+        - PYTHON_VERSION="3.9"
+    - name: "Build - OctoBot-Builder - manylinux - x86_64 - Python 3.7"
+      <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="manylinux-x86_64"
         - DOCKER_FILE="manylinux/x86_64/Dockerfile"
-    - <<: *docker_build
-      name: "Build - OctoBot-Builder - stdeb"
+        - PYTHON_VERSION="3.7"
+    - name: "Build - OctoBot-Builder - manylinux - x86_64 - Python 3.8"
+      <<: *docker_build
+      env:
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - IMAGE_NAME="drakkarsoftware/pypi-builder"
+        - VERSION="manylinux-x86_64"
+        - DOCKER_FILE="manylinux/x86_64/Dockerfile"
+        - PYTHON_VERSION="3.8"
+    - name: "Build - OctoBot-Builder - manylinux - x86_64 - Python 3.9"
+      <<: *docker_build
+      env:
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - IMAGE_NAME="drakkarsoftware/pypi-builder"
+        - VERSION="manylinux-x86_64"
+        - DOCKER_FILE="manylinux/x86_64/Dockerfile"
+        - PYTHON_VERSION="3.9"
+    - name: "Build - OctoBot-Builder - stdeb - Python 3.7"
+      <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="stdeb"
         - DOCKER_FILE="stdeb/Dockerfile"
+        - PYTHON_VERSION="3.7"
+    - name: "Build - OctoBot-Builder - stdeb - Python 3.8"
+      <<: *docker_build
+      env:
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - IMAGE_NAME="drakkarsoftware/pypi-builder"
+        - VERSION="stdeb"
+        - DOCKER_FILE="stdeb/Dockerfile"
+        - PYTHON_VERSION="3.8"
+    - name: "Build - OctoBot-Builder - stdeb - Python 3.9"
+      <<: *docker_build
+      env:
+        - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
+        - GITHUB_PROJECT="OctoBot-Builder/pypi"
+        - IMAGE_NAME="drakkarsoftware/pypi-builder"
+        - VERSION="stdeb"
+        - DOCKER_FILE="stdeb/Dockerfile"
+        - PYTHON_VERSION="3.9"
 
 after_failure:
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh

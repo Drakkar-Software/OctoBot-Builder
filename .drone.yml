@@ -6,8 +6,7 @@ platform:
   os: linux
   arch: arm64
 
-steps:
-- name: docker
+docker_build_manylinux: &docker_build_manylinux
   image: plugins/docker
   settings:
     username:
@@ -17,8 +16,26 @@ steps:
     context: pypi
     repo: drakkarsoftware/pypi-builder
     dockerfile: pypi/manylinux/aarch64/Dockerfile
-    tags:
-    - manylinux-aarch64
+
+steps:
+- name: docker_build_python_3_7
+  <<: *docker_build_manylinux
+  build_args:
+  - PYTHON_VERSION=3.7
+  tags:
+  - python-3.7-manylinux-aarch64
+- name: docker_build_python_3_8
+  <<: *docker_build_manylinux
+  build_args:
+  - PYTHON_VERSION=3.8
+  tags:
+  - python-3.8-manylinux-aarch64
+- name: docker_build_python_3_9
+  <<: *docker_build_manylinux
+  build_args:
+  - PYTHON_VERSION=3.9
+  tags:
+  - python-3.9-manylinux-aarch64
 
 ---
 kind: pipeline

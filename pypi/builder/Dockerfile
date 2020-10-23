@@ -1,4 +1,5 @@
-FROM python:3.7.7-slim-stretch
+ARG PYTHON_VERSION
+FROM python:${PYTHON_VERSION}-slim-stretch
 
 WORKDIR /builder
 COPY build.sh .
