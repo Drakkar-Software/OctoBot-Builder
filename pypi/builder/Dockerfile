@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim-stretch
+FROM python:${PYTHON_VERSION}-slim-buster
 
 WORKDIR /builder
 COPY build.sh .

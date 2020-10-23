@@ -6,7 +6,7 @@ RUN yum install -y libffi libffi-devel openssl-devel wget unzip  blas-devel lapa
     && chmod +x build.sh \
     && mkdir /project
 
-ENV PYTHON_PATH="/opt/python/cp37-cp37m/bin"
+ENV PYTHON_PATH="/opt/python/${PYTHON_VERSION}/bin"
 ENV BUILD_TYPE="WHEEL"
 
 CMD ["/bin/sh", "/builder/build.sh"]

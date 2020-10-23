@@ -36,7 +36,7 @@ docker_buildx: &docker_buildx
     - docker buildx create --use
     - if [ -n "$TRAVIS_TAG" ]; then export VERSION=$TRAVIS_TAG; fi
     - if [ "$TRAVIS_EVENT_TYPE" == "api" ]; then export VERSION=$OCTOBOT_DOCKER_API_IMAGE_TAG; fi
-    - docker buildx build -f $DOCKER_FILE --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
+    - docker buildx build -f $DOCKER_FILE --build-arg PYTHON_VERSION=$PYTHON_VERSION --push --platform $PLATFORMS -t $IMAGE_NAME:$VERSION .
 
 docker_build: &docker_build
   stage: build
@@ -48,8 +48,8 @@ docker_build: &docker_build
   before_script:
     - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
   script:
-    - docker build -f $DOCKER_FILE --build-arg PYTHON_VERSION=$PYTHON_VERSION -t $IMAGE_NAME:python-$PYTHON_VERSION-$VERSION .
-    - docker push $IMAGE_NAME:python-$PYTHON_VERSION-$VERSION
+    - docker build -f $DOCKER_FILE --build-arg PYTHON_VERSION=$PYTHON_VERSION -t $IMAGE_NAME:$VERSION .
+    - docker push $IMAGE_NAME:$VERSION
 
 jobs:
   include:
@@ -72,67 +72,68 @@ jobs:
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - DOCKER_FILE="builder/Dockerfile"
         - VERSION="latest"
+        - PYTHON_VERSION="3.7"
     - name: "Build - OctoBot-Builder - manylinux - i686 - Python 3.7"
       <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="manylinux-i686"
+        - VERSION="python3.7-manylinux-i686"
         - DOCKER_FILE="manylinux/i686/Dockerfile"
-        - PYTHON_VERSION="3.7"
+        - PYTHON_VERSION="cp37-cp37m"
     - name: "Build - OctoBot-Builder - manylinux - i686 - Python 3.8"
       <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="manylinux-i686"
+        - VERSION="python3.8-manylinux-i686"
         - DOCKER_FILE="manylinux/i686/Dockerfile"
-        - PYTHON_VERSION="3.8"
+        - PYTHON_VERSION="cp38-cp38m"
     - name: "Build - OctoBot-Builder - manylinux - i686 - Python 3.9"
       <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="manylinux-i686"
+        - VERSION="python3.9-manylinux-i686"
         - DOCKER_FILE="manylinux/i686/Dockerfile"
-        - PYTHON_VERSION="3.9"
+        - PYTHON_VERSION="cp39-cp39m"
     - name: "Build - OctoBot-Builder - manylinux - x86_64 - Python 3.7"
       <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="manylinux-x86_64"
+        - VERSION="python3.7-manylinux-x86_64"
         - DOCKER_FILE="manylinux/x86_64/Dockerfile"
-        - PYTHON_VERSION="3.7"
+        - PYTHON_VERSION="cp37-cp37m"
     - name: "Build - OctoBot-Builder - manylinux - x86_64 - Python 3.8"
       <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="manylinux-x86_64"
+        - VERSION="python3.8-manylinux-x86_64"
         - DOCKER_FILE="manylinux/x86_64/Dockerfile"
-        - PYTHON_VERSION="3.8"
+        - PYTHON_VERSION="cp38-cp38m"
     - name: "Build - OctoBot-Builder - manylinux - x86_64 - Python 3.9"
       <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="manylinux-x86_64"
+        - VERSION="python3.9-manylinux-x86_64"
         - DOCKER_FILE="manylinux/x86_64/Dockerfile"
-        - PYTHON_VERSION="3.9"
+        - PYTHON_VERSION="cp39-cp39m"
     - name: "Build - OctoBot-Builder - stdeb - Python 3.7"
       <<: *docker_build
       env:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="stdeb"
+        - VERSION="python3.7-stdeb"
         - DOCKER_FILE="stdeb/Dockerfile"
         - PYTHON_VERSION="3.7"
     - name: "Build - OctoBot-Builder - stdeb - Python 3.8"
@@ -141,7 +142,7 @@ jobs:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="stdeb"
+        - VERSION="python3.8-stdeb"
         - DOCKER_FILE="stdeb/Dockerfile"
         - PYTHON_VERSION="3.8"
     - name: "Build - OctoBot-Builder - stdeb - Python 3.9"
@@ -150,7 +151,7 @@ jobs:
         - GITHUB_REPOSITORY="Drakkar-Software/OctoBot-Builder"
         - GITHUB_PROJECT="OctoBot-Builder/pypi"
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
-        - VERSION="stdeb"
+        - VERSION="python3.9-stdeb"
         - DOCKER_FILE="stdeb/Dockerfile"
         - PYTHON_VERSION="3.9"
 
