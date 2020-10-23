@@ -1,5 +1,7 @@
 FROM quay.io/pypa/manylinux2014_aarch64:latest
 
+ARG PYTHON_VERSION
+
 WORKDIR /builder
 COPY build.sh .
 RUN yum install -y libffi libffi-devel openssl-devel wget unzip blas-devel lapack-devel libxml2-devel libxslt-devel \

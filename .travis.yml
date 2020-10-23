@@ -90,7 +90,7 @@ jobs:
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="python-3.8-manylinux-i686"
         - DOCKER_FILE="manylinux/i686/Dockerfile"
-        - PYTHON_VERSION="cp38-cp38m"
+        - PYTHON_VERSION="cp38-cp38"
     - name: "Build - OctoBot-Builder - manylinux - i686 - Python 3.9"
       <<: *docker_build
       env:
@@ -99,7 +99,7 @@ jobs:
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="python-3.9-manylinux-i686"
         - DOCKER_FILE="manylinux/i686/Dockerfile"
-        - PYTHON_VERSION="cp39-cp39m"
+        - PYTHON_VERSION="cp39-cp39"
     - name: "Build - OctoBot-Builder - manylinux - x86_64 - Python 3.7"
       <<: *docker_build
       env:
@@ -117,7 +117,7 @@ jobs:
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="python-3.8-manylinux-x86_64"
         - DOCKER_FILE="manylinux/x86_64/Dockerfile"
-        - PYTHON_VERSION="cp38-cp38m"
+        - PYTHON_VERSION="cp38-cp38"
     - name: "Build - OctoBot-Builder - manylinux - x86_64 - Python 3.9"
       <<: *docker_build
       env:
@@ -126,7 +126,7 @@ jobs:
         - IMAGE_NAME="drakkarsoftware/pypi-builder"
         - VERSION="python-3.9-manylinux-x86_64"
         - DOCKER_FILE="manylinux/x86_64/Dockerfile"
-        - PYTHON_VERSION="cp39-cp39m"
+        - PYTHON_VERSION="cp39-cp39"
     - name: "Build - OctoBot-Builder - stdeb - Python 3.7"
       <<: *docker_build
       env:

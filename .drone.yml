@@ -27,13 +27,13 @@ steps:
 - name: docker_build_python_3_8
   <<: *docker_build_manylinux
   build_args:
-  - PYTHON_VERSION=cp38-cp38m
+  - PYTHON_VERSION=cp38-cp38
   tags:
   - python-3.8-manylinux-aarch64
 - name: docker_build_python_3_9
   <<: *docker_build_manylinux
   build_args:
-  - PYTHON_VERSION=cp39-cp39m
+  - PYTHON_VERSION=cp39-cp39
   tags:
   - python-3.9-manylinux-aarch64
 
